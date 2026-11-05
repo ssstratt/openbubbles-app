@@ -21,10 +21,11 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Map Workspace to Virtual Drive
+      - name: Copy project to short path C:\b
         shell: pwsh
         run: |
-          subst X: $env:GITHUB_WORKSPACE
+          New-Item -ItemType Directory -Force -Path "C:\b"
+          Get-ChildItem -Path $env:GITHUB_WORKSPACE -Force | Copy-Item -Destination "C:\b" -Recurse -Force
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
@@ -41,7 +42,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Fairplay keys
-        working-directory: X:\
+        working-directory: C:\b
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path "rustpush/certs/fairplay"
@@ -58,19 +59,19 @@ jobs:
           }
 
       - name: Enable Windows desktop support
-        working-directory: X:\
+        working-directory: C:\b
         run: flutter config --enable-windows-desktop
 
       - name: Install dependencies
-        working-directory: X:\
+        working-directory: C:\b
         run: flutter pub get
 
       - name: Build Windows Executable
-        working-directory: X:\
+        working-directory: C:\b
         run: flutter build windows --release
 
       - name: Upload Windows Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: openbubbles-windows-x64
-          path: build/windows/x64/runner/Release/
+          path: C:\b\build\windows\x64\runner\Release\
