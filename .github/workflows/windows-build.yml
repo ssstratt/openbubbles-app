@@ -8,7 +8,7 @@ on:
 jobs:
   build-windows:
     name: Build Windows App
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -44,6 +44,12 @@ jobs:
             Copy-Item "rustpush/certs/legacy-fairplay/fairplay.pem" "rustpush/certs/fairplay/$name.pem"
             Copy-Item "rustpush/certs/legacy-fairplay/fairplay.crt" "rustpush/certs/fairplay/$name.crt"
           }
+
+      - name: Enable Windows desktop support
+        run: flutter config --enable-windows-desktop
+
+      - name: Check Flutter Doctor
+        run: flutter doctor -v
 
       - name: Install dependencies
         run: flutter pub get
